@@ -32,10 +32,10 @@ jobs:
       # Step 4: Create a GitHub Release
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: "pre-release-$(date +'%Y%m%d%H%M%S')"
-          release_name: "Pre-release $(date +'%Y-%m-%d %H:%M:%S')"
+          name: "Pre-release $(date +'%Y-%m-%d %H:%M:%S')"
           prerelease: true
           make_latest: 'true'
           preserve_order: true
@@ -43,3 +43,4 @@ jobs:
             build/brodsky-linux-amd64
             build/brodsky-darwin-amd64
             build/brosdky-windows-amd64.exe
+          token: ${{github.token}}
