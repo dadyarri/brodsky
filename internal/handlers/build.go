@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"brodsky/config"
 	"brodsky/internal/log"
 	"fmt"
 	"github.com/spf13/cobra"
-	"os"
 	"path/filepath"
 )
 
@@ -21,13 +21,14 @@ func handleBuildRun(cmd *cobra.Command) error {
 		return err
 	}
 
-	log.Debug(fmt.Sprintf("Using configuration file: %s", configPath))
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return fmt.Errorf("configuration file '%s' not found", configPath)
+	site, err := config.NewSite(configPath)
+
+	if err != nil {
+		return err
 	}
 
 	log.Info("Building the static site...")
-	log.Info("Site built successfully in the 'public/' directory")
+	log.Info(fmt.Sprintf("Site built successfully in the '%s' directory", site.OutputPath))
 
 	return nil
 }
