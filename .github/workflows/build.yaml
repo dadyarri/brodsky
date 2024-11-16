@@ -29,16 +29,24 @@ jobs:
           GOOS=darwin GOARCH=amd64 go build -o build/brodsky-darwin-amd64
           GOOS=windows GOARCH=amd64 go build -o build/brodsky-windows-amd64.exe
 
+      - name: Get names for release and tag
+        id: get_names
+        run: |
+          RELEASE_NAME_TS=$(date '+%Y-%m-%d %H:%M:%S')
+          TAG_NAME_TS=$(date '+%Y%m%d%H%M%S')
+          
+          echo "release_name=Pre-release $RELEASE_NAME_TS" >> $GITHUB_OUTPUT
+          echo "tag_name=pre-release-$TAG_NAME_TS" >> $GITHUB_OUTPUT
+
       # Step 4: Create a GitHub Release
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "pre-release-$(date +'%Y%m%d%H%M%S')"
-          name: "Pre-release $(date +'%Y-%m-%d %H:%M:%S')"
+          tag_name: ${{ steps.get_names.outputs.tag_name }}
+          name: ${{ steps.get_names.outputs.release_name }}
           prerelease: true
           make_latest: 'true'
-          preserve_order: true
           files: |
             build/brodsky-linux-amd64
             build/brodsky-darwin-amd64
