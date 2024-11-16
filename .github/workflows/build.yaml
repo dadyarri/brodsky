@@ -1,0 +1,45 @@
+name: Build and Release Go Application
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-release:
+    name: Build and Create Pre-Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Go environment
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23
+
+      # Step 3: Build for Linux and Windows
+      - name: Build binaries for Linux and Windows
+        run: |
+          mkdir -p build
+          GOOS=linux GOARCH=amd64 go build -o build/brodsky-linux-amd64
+          GOOS=darwin GOARCH=amd64 go build -o build/brodsky-darwin-amd64
+          GOOS=windows GOARCH=amd64 go build -o build/brodsky-windows-amd64.exe
+
+      # Step 4: Create a GitHub Release
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "pre-release-$(date +'%Y%m%d%H%M%S')"
+          release_name: "Pre-release $(date +'%Y-%m-%d %H:%M:%S')"
+          prerelease: true
+          make_latest: 'true'
+          preserve_order: true
+          files: |
+            build/brodsky-linux-amd64
+            build/brodsky-darwin-amd64
+            build/brosdky-windows-amd64.exe
