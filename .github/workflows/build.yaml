@@ -30,7 +30,7 @@ jobs:
         run: |
           cd src
           mkdir -p ../build
-          if [ "{{ matrix.os }}" = "windows" ]; then
+          if [ "${{ matrix.os }}" = "windows" ]; then
             go build -o ../build/brodsky-${{ matrix.os }}-${{ matrix.arch }}.exe
           else
             go build -o ../build/brodsky-${{ matrix.os }}-${{ matrix.arch }}
