@@ -29,6 +29,7 @@ func Execute() error {
 }
 
 func init() {
+	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.PersistentFlags().BoolP("version", "", false, "Print the version number")
