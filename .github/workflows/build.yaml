@@ -79,8 +79,23 @@ jobs:
           path: build/
           merge-multiple: true
 
+      # Step 4: Create ZIP archives
+      - name: Package executables into ZIP archives
+        run: |
+          mkdir -p releases
+          cd build
+          mv brodsky-linux-amd64 brodsky
+          zip -j ../releases/brodsky-linux-amd64.zip brodsky
+          rm brodsky
+          mv brodsky-darwin-amd64 brodsky
+          zip -j ../releases/brodsky-darwin-amd64.zip brodsky
+          rm brodsky
+          mv brodsky-windows-amd64.exe brodsky.exe
+          zip -j ../releases/brodsky-windows-amd64.zip brodsky.exe
+          rm brodsky.exe
+          cd ..
 
-      # Step 4: Create github release
+      # Step 5: Create GitHub Release
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -89,8 +104,5 @@ jobs:
           name: ${{ steps.get_names.outputs.release_name }}
           prerelease: true
           make_latest: 'true'
-          files: |
-            build/brodsky-linux-amd64
-            build/brodsky-darwin-amd64
-            build/brodsky-windows-amd64.exe
+          files: releases/*
           token: ${{github.token}}
