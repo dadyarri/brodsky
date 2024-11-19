@@ -9,6 +9,10 @@ jobs:
   build-and-release:
     name: Build and Create Pre-Release
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [linux, windows, macos]
+        arch: [amd64]
 
     steps:
       # Step 1: Checkout the repository
@@ -21,14 +25,18 @@ jobs:
         with:
           go-version: 1.23
 
-      # Step 3: Build for Linux and Windows
-      - name: Build binaries for Linux and Windows
+      - name: Build binaries
         run: |
           cd src
           mkdir -p build
-          GOOS=linux GOARCH=amd64 go build -o build/brodsky-linux-amd64
-          GOOS=darwin GOARCH=amd64 go build -o build/brodsky-darwin-amd64
-          GOOS=windows GOARCH=amd64 go build -o build/brodsky-windows-amd64.exe
+          if [ "{{ matrix.os }}" = "windows" ]; then
+            go build -o ../build/brodsky-{{ matrix.os }}-{{ matrix.arch }}.exe
+          else
+            go build -o ../build/brodsky-{{ matrix.os }}-{{ matrix.arch }}
+          fi
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
 
       - name: Get names for release and tag
         id: get_names
