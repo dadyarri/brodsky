@@ -1,7 +1,7 @@
 package config
 
 import (
-	"brodsky/internal/log"
+	"brodsky/pkg/log"
 	"fmt"
 	"github.com/pelletier/go-toml/v2"
 	"os"

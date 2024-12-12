@@ -2,7 +2,7 @@ package main
 
 import (
 	"brodsky/cmd"
-	"brodsky/internal/log"
+	"brodsky/pkg/log"
 )
 
 func main() {
