@@ -46,14 +46,15 @@ func handleInitRun(cmd *cobra.Command) error {
 	baseUrl := utils.AskString("What is the URL of your site?", "https://example.com", func(input string) bool {
 		u, err := url.Parse(input)
 		if err == nil && u.Scheme != "" && u.Host != "" {
-			return false
+			return true
 		}
 
-		return true
+		return false
 	})
 
 	enableSass := utils.AskBool("Do you want to enable Sass compilation?", true)
 	enableSyntaxHighlighting := utils.AskBool("Do you want to enable syntax highlighting?", true)
+	enableResumeBuilding := utils.AskBool("Do you want to enable resume building?", false)
 
 	projectBasePath, err := os.Getwd()
 
@@ -93,6 +94,22 @@ func handleInitRun(cmd *cobra.Command) error {
 
 	directories := []string{"content", "themes", "templates", "static"}
 
+	var resumeConfig *config.Resume
+
+	if enableResumeBuilding {
+		resumePath := utils.AskString("What is the path to file with resume?", filepath.Join("static", "resume.json"), nil)
+
+		relResumePath, err := utils.RelativizePath(projectPath, resumePath)
+
+		if err != nil {
+			return err
+		}
+
+		resumeConfig = &config.Resume{
+			Path: relResumePath,
+		}
+	}
+
 	for _, dir := range directories {
 		err = os.MkdirAll(filepath.Join(projectPath, dir), os.ModePerm)
 		if err != nil {
@@ -103,7 +120,7 @@ func handleInitRun(cmd *cobra.Command) error {
 	usr, err := user.Current()
 
 	if err != nil {
-		return err
+		usr = &user.User{Username: ""}
 	}
 
 	cfg := config.Config{
@@ -116,6 +133,7 @@ func handleInitRun(cmd *cobra.Command) error {
 		Markdown: config.Markdown{
 			SyntaxHighlighting: enableSyntaxHighlighting,
 		},
+		Resume: resumeConfig,
 	}
 
 	b, err := toml.Marshal(cfg)
