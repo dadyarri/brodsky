@@ -45,6 +45,18 @@ func (pm *PluginManager) EnablePlugin(plugin Plugin) error {
 	return nil
 }
 
+func (pm *PluginManager) InitPlugins(config config.Site) error {
+	for _, plugin := range pm.enabledPlugins {
+		err := plugin.Init(config)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (pm *PluginManager) ExecutePlugins() error {
 	for _, plugin := range pm.enabledPlugins {
 		if err := plugin.Execute(); err != nil {
