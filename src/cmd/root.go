@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-var configPath string
+var configName string
+var rootPath string
 
 var rootCmd = &cobra.Command{
 	Use:               strings.ToLower(info.GetAppName()),
@@ -35,7 +36,8 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.PersistentFlags().BoolP("version", "", false, "Print the version number")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enables verbose output")
-	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "config.toml", "Path to the configuration file")
+	rootCmd.PersistentFlags().StringVarP(&rootPath, "root", "r", ".", "Path to the project root")
+	rootCmd.PersistentFlags().StringVarP(&configName, "config", "c", "config.toml", "Path to the configuration file (relative to root)")
 }
 
 func rootPersistentPreRunE(cmd *cobra.Command, _ []string) error {

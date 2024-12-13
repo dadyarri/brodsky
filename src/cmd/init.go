@@ -33,14 +33,20 @@ func InitRunE(cmd *cobra.Command, _ []string) error {
 func handleInitRun(cmd *cobra.Command) error {
 
 	projectName := cmd.Flag("name").Value.String()
+	projectBasePath := cmd.Flag("root").Value.String()
+	configFileName := cmd.Flag("config").Value.String()
 	force, err := cmd.Flags().GetBool("force")
 
 	if err != nil {
 		return err
 	}
 
-	log.Info(fmt.Sprintf("Initializing new project '%s'", projectName))
+	if !filepath.IsAbs(projectBasePath) {
+		return fmt.Errorf("project root must be absolute")
+	}
+
 	log.Info(fmt.Sprintf("Welcome to %s!", info.GetAppName()))
+	log.Info(fmt.Sprintf("Initializing new project '%s' in '%s'", projectName, projectBasePath))
 	log.Info("Please answer a few questions to get started quickly.")
 
 	baseUrl := utils.AskString("What is the URL of your site?", "https://example.com", func(input string) bool {
@@ -55,8 +61,6 @@ func handleInitRun(cmd *cobra.Command) error {
 	enableSass := utils.AskBool("Do you want to enable Sass compilation?", true)
 	enableSyntaxHighlighting := utils.AskBool("Do you want to enable syntax highlighting?", true)
 	enableResumeBuilding := utils.AskBool("Do you want to enable resume building?", false)
-
-	projectBasePath, err := os.Getwd()
 
 	if err != nil {
 		return err
@@ -137,7 +141,7 @@ func handleInitRun(cmd *cobra.Command) error {
 	}
 
 	b, err := toml.Marshal(cfg)
-	err = os.WriteFile(filepath.Join(projectPath, "config.toml"), b, os.ModePerm)
+	err = os.WriteFile(filepath.Join(projectPath, configFileName), b, os.ModePerm)
 
 	if err != nil {
 		return err
