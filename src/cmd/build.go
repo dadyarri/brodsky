@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"brodsky/pkg/config"
 	"brodsky/pkg/log"
+	"brodsky/pkg/site"
 	"fmt"
 	"github.com/spf13/cobra"
 	"path/filepath"
@@ -32,7 +32,7 @@ func handleBuildRun(cmd *cobra.Command) error {
 		return err
 	}
 
-	site, err := config.NewSite(configPath)
+	site, err := site.NewSite(configPath)
 
 	if err != nil {
 		return err

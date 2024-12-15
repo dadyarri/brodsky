@@ -62,10 +62,6 @@ func handleInitRun(cmd *cobra.Command) error {
 	enableSyntaxHighlighting := utils.AskBool("Do you want to enable syntax highlighting?", true)
 	enableResumeBuilding := utils.AskBool("Do you want to enable resume building?", false)
 
-	if err != nil {
-		return err
-	}
-
 	projectPath := filepath.Join(projectBasePath, projectName)
 
 	ex, err := utils.PathExists(projectPath)

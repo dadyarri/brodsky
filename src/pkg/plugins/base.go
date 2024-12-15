@@ -11,7 +11,7 @@ import (
 // Plugin interface defines the methods that every plugin must implement
 type Plugin interface {
 	Name() string
-	Init(config config.Site) error
+	Init(config config.Config) error
 	Execute() error
 }
 
@@ -19,25 +19,26 @@ type PluginManager struct {
 	enabledPlugins []Plugin
 }
 
-func (pm *PluginManager) Init(config config.Site) error {
+func InitPlugins(config config.Config) (*PluginManager, error) {
+	pm := new(PluginManager)
 	err := pm.EnablePlugin(&parser.MarkdownParserPlugin{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = pm.EnablePlugin(&renderer.LiquidRendererPlugin{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if config.Config.Resume != nil {
+	if config.Resume != nil {
 		err = pm.EnablePlugin(&resume_json.ResumeJsonPlugin{})
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return pm, nil
 }
 
 func (pm *PluginManager) EnablePlugin(plugin Plugin) error {
@@ -45,7 +46,7 @@ func (pm *PluginManager) EnablePlugin(plugin Plugin) error {
 	return nil
 }
 
-func (pm *PluginManager) InitPlugins(config config.Site) error {
+func (pm *PluginManager) InitPlugins(config config.Config) error {
 	for _, plugin := range pm.enabledPlugins {
 		err := plugin.Init(config)
 

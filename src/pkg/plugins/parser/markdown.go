@@ -9,7 +9,7 @@ func (plugin *MarkdownParserPlugin) Name() string {
 	return "markdown_parser"
 }
 
-func (plugin *MarkdownParserPlugin) Init(site config.Site) error {
+func (plugin *MarkdownParserPlugin) Init(site config.Config) error {
 	return nil
 }
 

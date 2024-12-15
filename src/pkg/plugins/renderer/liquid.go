@@ -9,7 +9,7 @@ func (plugin *LiquidRendererPlugin) Name() string {
 	return "liquid_renderer"
 }
 
-func (plugin *LiquidRendererPlugin) Init(site config.Site) error {
+func (plugin *LiquidRendererPlugin) Init(site config.Config) error {
 	return nil
 }
 

@@ -1,7 +1,9 @@
-package config
+package site
 
 import (
+	"brodsky/pkg/config"
 	"brodsky/pkg/log"
+	"brodsky/pkg/plugins"
 	"fmt"
 	"github.com/pelletier/go-toml/v2"
 	"os"
@@ -15,7 +17,8 @@ type Site struct {
 	StaticPath    string
 	TemplatesPath string
 	OutputPath    string
-	Config        Config
+	Config        config.Config
+	PluginManager *plugins.PluginManager
 }
 
 func NewSite(configPath string) (*Site, error) {
@@ -26,24 +29,30 @@ func NewSite(configPath string) (*Site, error) {
 
 	fileContent, err := os.ReadFile(configPath)
 	if err != nil {
-		err = fmt.Errorf("Error opening config fileContent: %v\n", err)
+		err = fmt.Errorf("Error opening cfg fileContent: %v\n", err)
 		return nil, err
 	}
 
-	var config Config
-	err = toml.Unmarshal(fileContent, &config)
+	var cfg config.Config
+	err = toml.Unmarshal(fileContent, &cfg)
 
 	if err != nil {
-		err = fmt.Errorf("Error parsing config fileContent: %v\n", err)
+		err = fmt.Errorf("Error parsing cfg fileContent: %v\n", err)
 		return nil, err
 	}
 
 	basePath := filepath.Dir(configPath)
 
-	outputPath := config.OutputPath
+	outputPath := cfg.OutputPath
 
 	if outputPath == "" {
 		outputPath = "public"
+	}
+
+	pluginManager, err := plugins.InitPlugins(cfg)
+
+	if err != nil {
+		return nil, err
 	}
 
 	site := &Site{
@@ -53,7 +62,8 @@ func NewSite(configPath string) (*Site, error) {
 		StaticPath:    filepath.Join(basePath, "static"),
 		TemplatesPath: filepath.Join(basePath, "templates"),
 		OutputPath:    filepath.Join(basePath, outputPath),
-		Config:        config,
+		Config:        cfg,
+		PluginManager: pluginManager,
 	}
 	return site, nil
 }

@@ -9,7 +9,7 @@ func (plugin *ResumeJsonPlugin) Name() string {
 	return "resume_json"
 }
 
-func (plugin *ResumeJsonPlugin) Init(site config.Site) error {
+func (plugin *ResumeJsonPlugin) Init(site config.Config) error {
 	return nil
 }
 
