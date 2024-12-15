@@ -36,17 +36,19 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.PersistentFlags().BoolP("version", "", false, "Print the version number")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enables verbose output")
+	rootCmd.PersistentFlags().Bool("colors", true, "Enables colored output")
 	rootCmd.PersistentFlags().StringVarP(&rootPath, "root", "r", ".", "Path to the project root")
 	rootCmd.PersistentFlags().StringVarP(&configName, "config", "c", "config.toml", "Path to the configuration file (relative to root)")
 }
 
 func rootPersistentPreRunE(cmd *cobra.Command, _ []string) error {
 	vVerbose, _ := cmd.Flags().GetBool("verbose")
+	vColored, _ := cmd.Flags().GetBool("colors")
 	if vVerbose {
-		log.InitializeLogger(logrus.DebugLevel)
+		log.InitializeLogger(logrus.DebugLevel, vColored)
 		log.Debug("Verbose mode enabled")
 	} else {
-		log.InitializeLogger(logrus.InfoLevel)
+		log.InitializeLogger(logrus.InfoLevel, vColored)
 	}
 
 	return nil

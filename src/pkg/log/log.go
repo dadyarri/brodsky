@@ -10,12 +10,12 @@ import (
 var Logger = logrus.New()
 
 // InitializeLogger sets up the logger with preferred formatting and options
-func InitializeLogger(level logrus.Level) {
+func InitializeLogger(level logrus.Level, colored bool) {
 	Logger.SetOutput(os.Stdout)
 	Logger.SetLevel(level)
 
 	Logger.SetFormatter(&coloredFormatter{
-		DisableColors: false,
+		DisableColors: !colored,
 	})
 }
 
@@ -85,6 +85,10 @@ func (f *coloredFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	message := entry.Message
 	if !f.DisableColors && color != "" {
 		message = fmt.Sprintf("%s%s%s", color, message, reset)
+	}
+
+	if f.DisableColors {
+		message = fmt.Sprintf("[%s]: %s", entry.Level, message)
 	}
 
 	formatted := fmt.Sprintf("%s\n", message)
