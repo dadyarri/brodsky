@@ -24,15 +24,10 @@ func buildRunE(cmd *cobra.Command, _ []string) error {
 }
 
 func handleBuildRun(cmd *cobra.Command) error {
+	projectPath := cmd.Flag("root").Value.String()
+	configFileName := cmd.Flag("config").Value.String()
 
-	configPath := cmd.Flag("config").Value.String()
-	configPath, err := filepath.Abs(configPath)
-
-	if err != nil {
-		return err
-	}
-
-	st, err := site.NewSite(configPath)
+	st, err := site.NewSite(filepath.Join(projectPath, configFileName))
 
 	if err != nil {
 		return err
