@@ -1,18 +1,18 @@
 package plugins
 
 import (
-	"brodsky/pkg/config"
 	"brodsky/pkg/log"
 	"brodsky/pkg/plugins/parser"
 	"brodsky/pkg/plugins/renderer"
 	"brodsky/pkg/plugins/resume_json"
+	"brodsky/pkg/site"
 	"fmt"
 )
 
 // Plugin interface defines the methods that every plugin must implement
 type Plugin interface {
 	Name() string
-	Init(config config.Config) error
+	Init(site site.Site) error
 	Execute() error
 }
 
@@ -20,7 +20,7 @@ type PluginManager struct {
 	enabledPlugins []Plugin
 }
 
-func EnablePlugins(config config.Config) (*PluginManager, error) {
+func EnablePlugins(site site.Site) (*PluginManager, error) {
 	pm := PluginManager{}
 
 	log.Debug("enabling plugins...")
@@ -28,11 +28,11 @@ func EnablePlugins(config config.Config) (*PluginManager, error) {
 	pm.EnablePlugin(&parser.MarkdownParserPlugin{})
 	pm.EnablePlugin(&renderer.LiquidRendererPlugin{})
 
-	if config.Resume != nil {
+	if site.Config.Resume != nil {
 		pm.EnablePlugin(&resume_json.ResumeJsonPlugin{})
 	}
 
-	err := pm.InitPlugins(config)
+	err := pm.InitPlugins(site)
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +45,9 @@ func (pm *PluginManager) EnablePlugin(plugin Plugin) {
 	log.Debug(fmt.Sprintf("plugin %s enabled", plugin.Name()))
 }
 
-func (pm *PluginManager) InitPlugins(config config.Config) error {
+func (pm *PluginManager) InitPlugins(site site.Site) error {
 	for _, plugin := range pm.enabledPlugins {
-		err := plugin.Init(config)
+		err := plugin.Init(site)
 
 		if err != nil {
 			return fmt.Errorf("error initializing plugin %s: %w", plugin.Name(), err)

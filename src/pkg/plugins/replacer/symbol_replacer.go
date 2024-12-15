@@ -1,6 +1,8 @@
 package replacer
 
-import "brodsky/pkg/config"
+import (
+	"brodsky/pkg/site"
+)
 
 type SymbolReplacerPlugin struct {
 }
@@ -9,7 +11,7 @@ func (plugin *SymbolReplacerPlugin) Name() string {
 	return "symbol_replacer"
 }
 
-func (plugin *SymbolReplacerPlugin) Init(site config.Config) error {
+func (plugin *SymbolReplacerPlugin) Init(site site.Site) error {
 	return nil
 }
 

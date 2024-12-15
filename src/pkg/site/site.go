@@ -3,7 +3,6 @@ package site
 import (
 	"brodsky/pkg/config"
 	"brodsky/pkg/log"
-	"brodsky/pkg/plugins"
 	"fmt"
 	"github.com/pelletier/go-toml/v2"
 	"os"
@@ -18,7 +17,6 @@ type Site struct {
 	TemplatesPath string
 	OutputPath    string
 	Config        config.Config
-	PluginManager plugins.PluginManager
 }
 
 func NewSite(configPath string) (*Site, error) {
@@ -49,12 +47,6 @@ func NewSite(configPath string) (*Site, error) {
 		outputPath = "public"
 	}
 
-	pluginManager, err := plugins.EnablePlugins(cfg)
-
-	if err != nil {
-		return nil, err
-	}
-
 	site := &Site{
 		BasePath:      basePath,
 		ContentPath:   filepath.Join(basePath, "content"),
@@ -63,7 +55,6 @@ func NewSite(configPath string) (*Site, error) {
 		TemplatesPath: filepath.Join(basePath, "templates"),
 		OutputPath:    filepath.Join(basePath, outputPath),
 		Config:        cfg,
-		PluginManager: *pluginManager,
 	}
 	return site, nil
 }

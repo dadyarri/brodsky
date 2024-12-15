@@ -1,6 +1,8 @@
 package renderer
 
-import "brodsky/pkg/config"
+import (
+	"brodsky/pkg/site"
+)
 
 type LiquidRendererPlugin struct {
 }
@@ -9,7 +11,7 @@ func (plugin *LiquidRendererPlugin) Name() string {
 	return "liquid_renderer"
 }
 
-func (plugin *LiquidRendererPlugin) Init(site config.Config) error {
+func (plugin *LiquidRendererPlugin) Init(site site.Site) error {
 	return nil
 }
 

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"brodsky/pkg/log"
+	"brodsky/pkg/plugins"
 	"brodsky/pkg/site"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -34,6 +35,18 @@ func handleBuildRun(cmd *cobra.Command) error {
 	}
 
 	log.Info("Building the static site...")
+
+	pm, err := plugins.EnablePlugins(*st)
+
+	if err != nil {
+		return err
+	}
+
+	err = pm.ExecutePlugins()
+	if err != nil {
+		return err
+	}
+
 	log.Info(fmt.Sprintf("Site built successfully in the '%s' directory", st.OutputPath))
 
 	return nil
