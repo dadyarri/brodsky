@@ -32,14 +32,14 @@ func handleBuildRun(cmd *cobra.Command) error {
 		return err
 	}
 
-	site, err := site.NewSite(configPath)
+	st, err := site.NewSite(configPath)
 
 	if err != nil {
 		return err
 	}
 
 	log.Info("Building the static site...")
-	log.Info(fmt.Sprintf("Site built successfully in the '%s' directory", site.OutputPath))
+	log.Info(fmt.Sprintf("Site built successfully in the '%s' directory", st.OutputPath))
 
 	return nil
 }

@@ -18,7 +18,7 @@ type Site struct {
 	TemplatesPath string
 	OutputPath    string
 	Config        config.Config
-	PluginManager *plugins.PluginManager
+	PluginManager plugins.PluginManager
 }
 
 func NewSite(configPath string) (*Site, error) {
@@ -49,11 +49,7 @@ func NewSite(configPath string) (*Site, error) {
 		outputPath = "public"
 	}
 
-	pluginManager, err := plugins.InitPlugins(cfg)
-
-	if err != nil {
-		return nil, err
-	}
+	pluginManager := plugins.InitPlugins(cfg)
 
 	site := &Site{
 		BasePath:      basePath,
