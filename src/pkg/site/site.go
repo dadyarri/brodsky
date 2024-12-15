@@ -29,7 +29,7 @@ func NewSite(configPath string) (*Site, error) {
 
 	fileContent, err := os.ReadFile(configPath)
 	if err != nil {
-		err = fmt.Errorf("Error opening cfg fileContent: %v\n", err)
+		err = fmt.Errorf("Error opening config file: %v\n", err)
 		return nil, err
 	}
 
@@ -37,7 +37,7 @@ func NewSite(configPath string) (*Site, error) {
 	err = toml.Unmarshal(fileContent, &cfg)
 
 	if err != nil {
-		err = fmt.Errorf("Error parsing cfg fileContent: %v\n", err)
+		err = fmt.Errorf("Error parsing config: %v\n", err)
 		return nil, err
 	}
 
@@ -49,7 +49,11 @@ func NewSite(configPath string) (*Site, error) {
 		outputPath = "public"
 	}
 
-	pluginManager := plugins.InitPlugins(cfg)
+	pluginManager, err := plugins.EnablePlugins(cfg)
+
+	if err != nil {
+		return nil, err
+	}
 
 	site := &Site{
 		BasePath:      basePath,
@@ -59,7 +63,7 @@ func NewSite(configPath string) (*Site, error) {
 		TemplatesPath: filepath.Join(basePath, "templates"),
 		OutputPath:    filepath.Join(basePath, outputPath),
 		Config:        cfg,
-		PluginManager: pluginManager,
+		PluginManager: *pluginManager,
 	}
 	return site, nil
 }

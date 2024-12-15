@@ -20,7 +20,7 @@ type PluginManager struct {
 	enabledPlugins []Plugin
 }
 
-func InitPlugins(config config.Config) PluginManager {
+func EnablePlugins(config config.Config) (*PluginManager, error) {
 	pm := PluginManager{}
 
 	log.Debug("enabling plugins...")
@@ -32,7 +32,12 @@ func InitPlugins(config config.Config) PluginManager {
 		pm.EnablePlugin(&resume_json.ResumeJsonPlugin{})
 	}
 
-	return pm
+	err := pm.InitPlugins(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pm, nil
 }
 
 func (pm *PluginManager) EnablePlugin(plugin Plugin) {
