@@ -1,4 +1,4 @@
-package resume_json
+package plugins
 
 import (
 	"brodsky/pkg/site"
@@ -15,6 +15,6 @@ func (plugin *ResumeJsonPlugin) Init(site site.Site) error {
 	return nil
 }
 
-func (plugin *ResumeJsonPlugin) Execute() error {
+func (plugin *ResumeJsonPlugin) Execute(Context) error {
 	return nil
 }

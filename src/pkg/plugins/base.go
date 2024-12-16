@@ -2,10 +2,8 @@ package plugins
 
 import (
 	"brodsky/pkg/log"
-	"brodsky/pkg/plugins/parser"
-	"brodsky/pkg/plugins/renderer"
-	"brodsky/pkg/plugins/resume_json"
 	"brodsky/pkg/site"
+	"encoding/json"
 	"fmt"
 )
 
@@ -13,11 +11,34 @@ import (
 type Plugin interface {
 	Name() string
 	Init(site site.Site) error
-	Execute() error
+	Execute(Context) error
 }
 
 type PluginManager struct {
+	Context        Context
 	enabledPlugins []Plugin
+}
+
+type Context struct {
+	Data map[string]interface{}
+}
+
+func (ctx *Context) Dump() error {
+	if ctx.Data != nil {
+		prettyJSON, err := json.MarshalIndent(ctx.Data, "", "  ")
+		if err != nil {
+			return fmt.Errorf("error generating JSON: %s", err)
+		}
+
+		log.Trace(string(prettyJSON))
+	}
+
+	return nil
+}
+
+type Stage struct {
+	Name string
+	Func func(ctx Context) error
 }
 
 func EnablePlugins(site site.Site) (*PluginManager, error) {
@@ -25,11 +46,11 @@ func EnablePlugins(site site.Site) (*PluginManager, error) {
 
 	log.Debug("enabling plugins...")
 
-	pm.EnablePlugin(&parser.MarkdownParserPlugin{})
-	pm.EnablePlugin(&renderer.LiquidRendererPlugin{})
+	pm.EnablePlugin(&MarkdownParserPlugin{})
+	pm.EnablePlugin(&LiquidRendererPlugin{})
 
 	if site.Config.Resume != nil {
-		pm.EnablePlugin(&resume_json.ResumeJsonPlugin{})
+		pm.EnablePlugin(&ResumeJsonPlugin{})
 	}
 
 	err := pm.InitPlugins(site)
@@ -46,6 +67,7 @@ func (pm *PluginManager) EnablePlugin(plugin Plugin) {
 }
 
 func (pm *PluginManager) InitPlugins(site site.Site) error {
+	pm.Context = Context{}
 	for _, plugin := range pm.enabledPlugins {
 		err := plugin.Init(site)
 
@@ -59,7 +81,7 @@ func (pm *PluginManager) InitPlugins(site site.Site) error {
 
 func (pm *PluginManager) ExecutePlugins() error {
 	for _, plugin := range pm.enabledPlugins {
-		if err := plugin.Execute(); err != nil {
+		if err := plugin.Execute(pm.Context); err != nil {
 			return fmt.Errorf("error executing plugin %s: %w", plugin.Name(), err)
 		}
 	}

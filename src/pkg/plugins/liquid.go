@@ -1,4 +1,4 @@
-package renderer
+package plugins
 
 import (
 	"brodsky/pkg/site"
@@ -15,6 +15,6 @@ func (plugin *LiquidRendererPlugin) Init(site site.Site) error {
 	return nil
 }
 
-func (plugin *LiquidRendererPlugin) Execute() error {
+func (plugin *LiquidRendererPlugin) Execute(Context) error {
 	return nil
 }
