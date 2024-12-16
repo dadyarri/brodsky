@@ -11,6 +11,7 @@ import (
 
 var configName string
 var rootPath string
+var verbosity int
 
 var rootCmd = &cobra.Command{
 	Use:               strings.ToLower(info.GetAppName()),
@@ -35,18 +36,21 @@ func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.PersistentFlags().BoolP("version", "", false, "Print the version number")
-	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enables verbose output")
+	rootCmd.PersistentFlags().CountVarP(&verbosity, "verbose", "v", "Enables verbose output")
 	rootCmd.PersistentFlags().Bool("colors", true, "Enables colored output")
 	rootCmd.PersistentFlags().StringVarP(&rootPath, "root", "r", ".", "Path to the project root")
 	rootCmd.PersistentFlags().StringVarP(&configName, "config", "c", "config.toml", "Path to the configuration file (relative to root)")
 }
 
 func rootPersistentPreRunE(cmd *cobra.Command, _ []string) error {
-	vVerbose, _ := cmd.Flags().GetBool("verbose")
+	vVerbose, _ := cmd.Flags().GetCount("verbose")
 	vColored, _ := cmd.Flags().GetBool("colors")
-	if vVerbose {
+	if vVerbose == 1 {
 		log.InitializeLogger(logrus.DebugLevel, vColored)
 		log.Debug("Verbose mode enabled")
+	} else if vVerbose >= 2 {
+		log.InitializeLogger(logrus.TraceLevel, vColored)
+		log.Trace("Trace mode enabled")
 	} else {
 		log.InitializeLogger(logrus.InfoLevel, vColored)
 	}

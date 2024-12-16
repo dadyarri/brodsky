@@ -39,6 +39,10 @@ func Debug(message string) {
 	Logger.Debug(message)
 }
 
+func Trace(message string) {
+	Logger.Trace(message)
+}
+
 func ExecutionTime(fn func() error) error {
 	start := time.Now()
 	err := fn()
@@ -69,6 +73,8 @@ func (f *coloredFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 	// Determine the color based on the log level
 	switch entry.Level {
+	case logrus.TraceLevel:
+		color = gray
 	case logrus.DebugLevel:
 		color = gray
 	case logrus.InfoLevel:
