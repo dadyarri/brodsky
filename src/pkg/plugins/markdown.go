@@ -23,13 +23,22 @@ func (plugin *MarkdownParserPlugin) Init(site site.Site) error {
 
 	if len(plugin.MarkdownOptions.ReplaceSymbols) > 0 {
 		plugin.Stages = RegisterStage(plugin.Stages, Stage{
-			Name: "replace_pairs",
+			Name: "init_context",
 			Func: func(ctx Context) error {
 				_ = ctx.Dump()
-				log.Info("Replacing defined symbols")
 				return nil
 			},
 		})
+		if len(plugin.MarkdownOptions.ReplaceSymbols) > 0 {
+			plugin.Stages = RegisterStage(plugin.Stages, Stage{
+				Name: "replace_symbols",
+				Func: func(ctx Context) error {
+					_ = ctx.Dump()
+					log.Info("Replacing defined symbols")
+					return nil
+				},
+			})
+		}
 	}
 	return nil
 }
