@@ -18,7 +18,8 @@ type Taxonomy struct {
 }
 
 type Markdown struct {
-	SyntaxHighlighting bool `toml:"highlight_code" comment:"Whether to do syntax highlighting"`
+	SyntaxHighlighting bool                `toml:"highlight_code" comment:"Whether to do syntax highlighting"`
+	ReplaceSymbols     []map[string]string `toml:"replace_symbols" comment:"Pairs of symbols to replace"`
 }
 
 type Resume struct {
