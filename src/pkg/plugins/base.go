@@ -73,7 +73,10 @@ func (pm *PluginManager) EnablePlugin(plugin Plugin) {
 }
 
 func (pm *PluginManager) InitPlugins(site site.Site) error {
-	pm.Context = Context{}
+	pm.Context = Context{
+		Data: make(map[string]interface{}),
+	}
+
 	for _, plugin := range pm.enabledPlugins {
 		err := plugin.Init(site)
 
