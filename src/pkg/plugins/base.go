@@ -41,6 +41,12 @@ type Stage struct {
 	Func func(ctx Context) error
 }
 
+func RegisterStage(stages []Stage, stage Stage) []Stage {
+	log.Debug(fmt.Sprintf("registering stage %s", stage.Name))
+	stages = append(stages, stage)
+	return stages
+}
+
 func EnablePlugins(site site.Site) (*PluginManager, error) {
 	pm := PluginManager{}
 
@@ -80,6 +86,7 @@ func (pm *PluginManager) InitPlugins(site site.Site) error {
 }
 
 func (pm *PluginManager) ExecutePlugins() error {
+	log.Debug(fmt.Sprintf("running plugins..."))
 	for _, plugin := range pm.enabledPlugins {
 		if err := plugin.Execute(pm.Context); err != nil {
 			return fmt.Errorf("error executing plugin %s: %w", plugin.Name(), err)

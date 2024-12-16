@@ -22,7 +22,7 @@ func (plugin *MarkdownParserPlugin) Init(site site.Site) error {
 	plugin.MarkdownOptions = site.Config.Markdown
 
 	if len(plugin.MarkdownOptions.ReplaceSymbols) > 0 {
-		plugin.Stages = append(plugin.Stages, Stage{
+		plugin.Stages = RegisterStage(plugin.Stages, Stage{
 			Name: "replace_pairs",
 			Func: func(ctx Context) error {
 				_ = ctx.Dump()
@@ -36,10 +36,10 @@ func (plugin *MarkdownParserPlugin) Init(site site.Site) error {
 
 func (plugin *MarkdownParserPlugin) Execute(ctx Context) error {
 
-	log.Info(fmt.Sprintf("running plugin '%s'", plugin.Name()))
+	log.Debug(fmt.Sprintf("running plugin %s", plugin.Name()))
 
 	for _, stage := range plugin.Stages {
-		log.Info(fmt.Sprintf("  running stage '%s'", stage.Name))
+		log.Debug(fmt.Sprintf("  running stage %s", stage.Name))
 
 		err := stage.Func(ctx)
 
