@@ -18,7 +18,6 @@ func (plugin *MarkdownParserPlugin) Name() string {
 }
 
 func (plugin *MarkdownParserPlugin) Init(site site.Site) error {
-	plugin.Collections = site.Collections
 	plugin.MarkdownOptions = site.Config.Markdown
 
 	if len(plugin.MarkdownOptions.ReplaceSymbols) > 0 {
