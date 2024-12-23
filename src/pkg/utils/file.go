@@ -36,3 +36,18 @@ func RelativizePath(basePath, targetPath string) (string, error) {
 
 	return relativePath, nil
 }
+
+// ReadFile reads content of file and returns it as bytearray along with error, if presented
+func ReadFile(path string) ([]byte, error) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return nil, fmt.Errorf("file '%s' not found", path)
+	}
+
+	fileContent, err := os.ReadFile(path)
+	if err != nil {
+		err = fmt.Errorf("Error opening config file: %v\n", err)
+		return nil, err
+	}
+
+	return fileContent, nil
+}
