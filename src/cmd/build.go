@@ -6,7 +6,6 @@ import (
 	"brodsky/pkg/site"
 	"fmt"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 // buildCmd represents the build command
@@ -28,7 +27,7 @@ func handleBuildRun(cmd *cobra.Command) error {
 	projectPath := cmd.Flag("root").Value.String()
 	configFileName := cmd.Flag("config").Value.String()
 
-	st, err := site.NewSite(filepath.Join(projectPath, configFileName))
+	st, err := site.NewSite(projectPath, configFileName)
 
 	if err != nil {
 		return err
