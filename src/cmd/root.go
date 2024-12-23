@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"os"
 	"strings"
 )
 
@@ -32,13 +33,18 @@ func Execute() error {
 }
 
 func init() {
+	workingDir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.PersistentFlags().BoolP("version", "", false, "Print the version number")
 	rootCmd.PersistentFlags().CountVarP(&verbosity, "verbose", "v", "Enables verbose output")
 	rootCmd.PersistentFlags().Bool("colors", true, "Enables colored output")
-	rootCmd.PersistentFlags().StringVarP(&rootPath, "root", "r", ".", "Path to the project root")
+	rootCmd.PersistentFlags().StringVarP(&rootPath, "root", "r", workingDir, "Path to the project root")
 	rootCmd.PersistentFlags().StringVarP(&configName, "config", "c", "config.toml", "Path to the configuration file (relative to root)")
 }
 
